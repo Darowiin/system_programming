@@ -65,14 +65,10 @@ bool readArrayFromFile(const char* filename, int*& arr, int& size) {
     return true;
 }
 
-int main(int argc, char* argv[]) {
-    if (argc != 3) {
-        std::cerr << "Использование: " << argv[0] << " <файл_массива> <значение_для_поиска>" << std::endl;
-        return 1;
-    }
+int main() {
 
-    const char* filename = argv[1];
-    int target = std::stoi(argv[2]);
+    const char* filename = "../array_99.bin";
+    int target = 1;
 
     int* arr = nullptr;
     int size = 0;
