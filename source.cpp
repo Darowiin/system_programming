@@ -10,6 +10,7 @@
 #include <grp.h>
 #include <shadow.h>
 #include <fcntl.h>
+#include "check.hpp"
 
 struct UserInfo {
     std::string name;
@@ -23,11 +24,6 @@ struct UserInfo {
 
 std::map<std::string, std::string> parse_shadow() {
     std::map<std::string, std::string> shadow_map;
-
-    int fd = open("/etc/shadow", O_RDONLY);
-    setuid(getuid());
-    if (fd < 0) return shadow_map;
-    close(fd);
 
     std::ifstream shadow("/etc/shadow");
     std::string line;
@@ -87,9 +83,15 @@ std::map<std::string, std::set<std::string>> parse_groups(std::map<std::string, 
 
 int main() {
     std::ifstream passwd("/etc/passwd");
+    int fd1 = check(open("/etc/shadow", O_RDONLY));
+    int fd2 = check(open("/etc/gshadow", O_RDONLY));
+    
     std::map<std::string, std::string> shadow_map = parse_shadow();
     std::map<std::string, std::set<std::string>> admin_map;
     std::map<std::string, std::set<std::string>> user_groups = parse_groups(admin_map);
+    setuid(getuid());
+    close(fd1);
+    close(fd2);
 
     std::string line;
     while (std::getline(passwd, line)) {
